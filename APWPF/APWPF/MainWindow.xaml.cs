@@ -49,5 +49,14 @@ namespace ADWPF
             }
             
         }
+        private void BtnPrint_Click(object sender, RoutedEventArgs e)
+
+        {
+            string strFile = result.Text;
+
+            Printer trying = new Printer(strFile);
+            trying.Show();
+
+        }
     }
 }
