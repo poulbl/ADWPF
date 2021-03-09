@@ -100,7 +100,7 @@ namespace ADWPF
         }
 
         
-        /*** Tommy Test Get all data from a user***/
+        /*** Tommy Test Get all data from a user ***/
         public Dictionary<string, List<string>> GetAllData(string username1)
         {
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
@@ -137,8 +137,58 @@ namespace ADWPF
             {
                 throw;
             }
-            //updated Visual Studio ......
+            //updated Visual Studio...
         }
+
+        /*** Tommy Test Get specifik data from a user ***/
+        public Dictionary<string, List<string>> GetSpecifik(string username2)
+        {
+
+            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+
+
+            try
+            {
+                SearchResult result;
+                DirectorySearcher ds;
+
+                ds = new DirectorySearcher(de);
+                ds.Filter = "(name=" + username2 + ")";
+
+                //Selected data groups
+                string[] requiredProperties = new string[] { "cn", "memberof", "userprincipalname", "description", "whenchanged" };
+
+                foreach (String property in requiredProperties)
+                    ds.PropertiesToLoad.Add(property);
+
+
+                result = ds.FindOne();
+
+                List<string> values = new List<string>();
+
+                if (result != null)
+                {
+                    foreach (String property in requiredProperties)
+                        foreach (Object myCollection in result.Properties[property])
+
+                            values.Add(String.Format("{0,-20} : {1}",
+                                        property, myCollection.ToString()));
+                }
+
+
+                dict.Add(username2, values);
+                return dict;
+
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+
 
 
     }
