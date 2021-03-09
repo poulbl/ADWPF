@@ -171,7 +171,7 @@ namespace ADWPF
                 ds.Filter = "(name=" + username2 + ")";
 
                 //Selected data groups
-                string[] requiredProperties = new string[] { "name", "cn", "memberof", "description", "whenchanged" };
+                string[] requiredProperties = new string[] { "cn", "memberof", "userprincipalname", "description", "whenchanged" };
 
                 foreach (String property in requiredProperties)
                     ds.PropertiesToLoad.Add(property);
