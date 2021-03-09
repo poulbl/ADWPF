@@ -100,5 +100,61 @@ namespace ADWPF
 
             return result.Properties["name"][0].ToString();
         }
+
+        
+        /*** Tommy Test Get all data from a user***/
+        public Dictionary<string, List<string>> GetAllData(string username1)
+        {
+
+            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+
+
+            try
+            {
+                SearchResult result;
+                DirectorySearcher ds;
+
+                ds = new DirectorySearcher(de);
+                ds.Filter = "(cn=" + username1 + ")";
+
+                result = ds.FindOne();
+
+                List<string> values1 = new List<string>();
+
+                if (result != null)
+                {
+
+                    // user exists, cycle through LDAP fields (cn, telephonenumber etc.)  
+                    ResultPropertyCollection fields = result.Properties;
+
+
+                    foreach (String ldapField in fields.PropertyNames)
+                    {
+                        // cycle through objects in each field e.g. group membership  
+                        // (for many fields there will only be one object such as name)  
+
+                        foreach (Object myCollection in fields[ldapField])
+                            values1.Add(String.Format("{0,-20} : {1}",
+                                          ldapField, myCollection.ToString()));
+
+
+                    }
+
+                }
+
+
+                dict.Add(username1, values1);
+                return dict;
+
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+
     }
 }
