@@ -39,9 +39,19 @@ namespace ADWPF
             ADStream stream = new ADStream(ip, user, password);
 
             var userGet = stream.GetUser(stream.GetAllUsers()[0]);
+            var userGetAll = stream.GetAllData(usernameText.Text);
+            
             if(Session.GetbLoggedIn())
             {
-                result.Text = userGet;
+                StringBuilder printStr = new StringBuilder();
+                printStr.Append(usernameText.Text);
+                printStr.Append(" --- ");
+                foreach (var item in userGetAll[usernameText.Text])
+                {
+                    printStr.Append(item);
+                }
+                result.Text = printStr.ToString();
+                //result.Text = userGet;
             }
             else
             {
