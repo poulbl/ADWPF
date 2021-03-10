@@ -27,6 +27,7 @@ namespace ADWPF
             {
                 Login loginWindow = new Login();
                 loginWindow.Show();
+                this.Close();
             }
         }
 
@@ -44,8 +45,8 @@ namespace ADWPF
             if(Session.GetbLoggedIn())
             {
                 StringBuilder printStr = new StringBuilder();
-                printStr.Append(usernameText.Text);
-                printStr.Append(" --- ");
+                printStr.Append($"Username: {usernameText.Text}");
+                printStr.Append("\n ________________________________");
                 foreach (var item in userGetAll[usernameText.Text])
                 {
                     printStr.Append("\n");

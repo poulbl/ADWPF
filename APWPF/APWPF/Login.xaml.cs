@@ -28,6 +28,7 @@ namespace ADWPF
             {
                 MainWindow mw = new MainWindow();
                 mw.Show();
+                this.Close();
             }
         }
     }
