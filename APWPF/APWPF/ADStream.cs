@@ -146,7 +146,6 @@ namespace ADWPF
 
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
 
-
             try
             {
                 SearchResult result;
@@ -185,11 +184,6 @@ namespace ADWPF
             {
                 throw;
             }
-
         }
-
-
-
-
     }
 }

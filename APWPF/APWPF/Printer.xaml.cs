@@ -22,11 +22,10 @@ namespace ADWPF
             XpsDocument hello;
             if (File.Exists(fileName))
             {
-                File.Delete(fileName);
+                File.Delete(fileName); //TODO hvis man canceller print og printer en ny så er filen i brug.
             }
             hello = new XpsDocument(fileName, System.IO.FileAccess.ReadWrite);
             XpsDocumentWriter xpsdw = XpsDocument.CreateXpsDocumentWriter(hello);
-
 
             Paragraph flowParagraph = new Paragraph();
             flowParagraph.Inlines.Add(senderr);

@@ -15,7 +15,7 @@ namespace ADWPF
             using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "192.168.132.71")) // miniput.local //IP ? 
             {
                 // validate the credentials
-                bool isValid = pc.ValidateCredentials(username, password);
+                bool isValid = pc.ValidateCredentials(username, password); // TODO Den her metode ValidateCredentials hænger helt vildt, hvis den er false.
                 bLoggedIn = isValid;
                 return isValid;
             }

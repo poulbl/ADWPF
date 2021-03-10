@@ -48,6 +48,7 @@ namespace ADWPF
                 printStr.Append(" --- ");
                 foreach (var item in userGetAll[usernameText.Text])
                 {
+                    printStr.Append("\n");
                     printStr.Append(item);
                 }
                 result.Text = printStr.ToString();
