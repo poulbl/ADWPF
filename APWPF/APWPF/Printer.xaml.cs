@@ -34,6 +34,7 @@ namespace ADWPF
             DocumentPaginator docPaginator = idpSource.DocumentPaginator;
             xpsdw.Write(docPaginator);
             _document = hello.GetFixedDocumentSequence();
+            hello.Close();
             PreviewD.Document = _document;
         }
         private void PrintSimpleTextButton_Click(object sender, RoutedEventArgs e)
