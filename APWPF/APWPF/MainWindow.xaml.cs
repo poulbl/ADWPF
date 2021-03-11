@@ -20,6 +20,11 @@ namespace ADWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        string ip = "192.168.132.71";
+        string user = "Administrator";
+        string password = "Password1";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,11 +36,18 @@ namespace ADWPF
             }
         }
 
+        private void OpenUserDetails(object sender, SelectionChangedEventArgs e)
+        {
+            ADStream stream = new ADStream(ip, user, password);
+            Dictionary<string, List<string>> userdata = stream.GetAllDataFromUser(users.SelectedItem.ToString());
+            UserDetails userDetails = new UserDetails(userdata[$"{users.SelectedItem}"]);
+            int i = 0;
+            userDetails.Show();
+        }
+
         private void submitButton_Click(object sender, RoutedEventArgs e)
         {
-            string ip = "192.168.132.71";
-            string user = "Administrator";
-            string password = "Password1";
+            
 
             ADStream stream = new ADStream(ip, user, password);
 
