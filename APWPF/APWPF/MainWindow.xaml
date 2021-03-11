@@ -49,5 +49,6 @@
                    />
         <TextBlock Grid.Column="3" Grid.Row="3" Text="" x:Name="result"/>
         <Button x:Name="printer" Content="print" Grid.Column="3" Grid.Row="5" Click="BtnPrint_Click"></Button>
+        <ListBox x:Name="users" Grid.Row="3" Grid.Column="4"></ListBox>
     </Grid>
 </Window>
