@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,20 +48,28 @@ namespace ADWPF
 
         private void submitButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            List<string> usersList = new List<string>();
 
             ADStream stream = new ADStream(ip, user, password);
 
-            var userGet = stream.GetUser(stream.GetAllUsers()[0]);
-            if(Session.GetbLoggedIn())
+            if (Session.GetbLoggedIn())
             {
-                result.Text = userGet;
+                result.Text = "";
+                SearchResultCollection searchResult = stream.GetUsers(usernameText.Text);
+                if (searchResult != null)
+                {
+                    for (int i = 0; i < searchResult.Count; i++)
+                    {
+                        usersList.Add(searchResult[i].Properties["name"][0].ToString());
+                    }
+                    users.ItemsSource = usersList;
+                }
             }
             else
             {
                 result.Text = "Ikke logged ind :(";
             }
-            
+
         }
         private void BtnPrint_Click(object sender, RoutedEventArgs e)
 
