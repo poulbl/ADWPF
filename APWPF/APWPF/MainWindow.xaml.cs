@@ -35,6 +35,7 @@ namespace ADWPF
                 loginWindow.Show();
                 this.Close();
             }
+            users.SelectionChanged += OpenUserDetails;
         }
 
         private void OpenUserDetails(object sender, SelectionChangedEventArgs e)
