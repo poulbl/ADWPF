@@ -27,6 +27,7 @@ namespace ADWPF
             {
                 Login loginWindow = new Login();
                 loginWindow.Show();
+                this.Close();
             }
         }
 
