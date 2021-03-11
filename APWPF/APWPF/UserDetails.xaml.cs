@@ -26,9 +26,10 @@ namespace ADWPF
         {
             InitializeComponent();
             this.userdata = userdata;
+            ReadUserData(userdata);
         }
 
-        public void ReadUserData()
+        public void ReadUserData(List<string> data)
         {
 
         }
@@ -38,7 +39,7 @@ namespace ADWPF
             ShowPrintPreview(contentForPrinting);
         }
 
-        private void ShowPrintPreview(FrameworkElement wpfElement)
+        private void ShowPrintPreview(UIElement wpfElement)
         {
             if (File.Exists("print_preview.xps") == true)
                 File.Delete("print_preview.xps");
