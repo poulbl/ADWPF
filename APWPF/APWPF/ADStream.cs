@@ -36,6 +36,11 @@ namespace ADWPF
             // Tom med vilje
         }
 
+        public string GetUser()
+        {
+            return "";
+        }
+
         public List<string> GetAllUsers()
         {
             List<string> listToReturn = new List<string>();
@@ -51,10 +56,8 @@ namespace ADWPF
             {
                 listToReturn.Add(sr.Properties["name"][0].ToString());
             }
-
             return listToReturn;
         }
-
 
         // 192.168.132.71
         public Dictionary<string, List<string>> GetAllUsersGroups()
@@ -93,14 +96,12 @@ namespace ADWPF
             DirectorySearcher ds;
 
             ds = new DirectorySearcher(de);
-            ds.Filter = "(&(objectCategory=User)(objectClass=person))"; // TODO
+            ds.Filter = "(&(objectCategory=User)(objectClass=person))";
             result = ds.FindOne();
 
             return result.Properties["name"][0].ToString();
         }
 
-        
-        /*** Tommy Test Get all data from a user ***/
         public Dictionary<string, List<string>> GetAllData(string username1)
         {
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
@@ -123,8 +124,7 @@ namespace ADWPF
                     foreach (String ldapField in fields.PropertyNames)
                     {
                         // cycle through objects in each field e.g. group membership  
-                        // (for many fields there will only be one object such as name)  
-
+                        // (for many fields there will only be one object such as name)
                         foreach (Object myCollection in fields[ldapField])
                             values1.Add(String.Format("{0,-20} : {1}",
                                           ldapField, myCollection.ToString()));
@@ -137,20 +137,16 @@ namespace ADWPF
             {
                 throw;
             }
-            //updated Visual Studio...
         }
 
-        /*** Tommy Test Get specifik data from a user ***/
         public Dictionary<string, List<string>> GetSpecifik(string username2)
         {
-
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
 
             try
             {
                 SearchResult result;
                 DirectorySearcher ds;
-
                 ds = new DirectorySearcher(de);
                 ds.Filter = "(name=" + username2 + ")";
 
@@ -159,7 +155,6 @@ namespace ADWPF
 
                 foreach (String property in requiredProperties)
                     ds.PropertiesToLoad.Add(property);
-
 
                 result = ds.FindOne();
 
@@ -173,13 +168,36 @@ namespace ADWPF
                             values.Add(String.Format("{0,-20} : {1}",
                                         property, myCollection.ToString()));
                 }
-
-
                 dict.Add(username2, values);
                 return dict;
-
             }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
+        public void UpdateUserData(string username3, string newInput)
+        {
+            try
+            {
+                SearchResult result; DirectorySearcher ds;
+                ds = new DirectorySearcher(de);
+                ds.Filter = "(cn=" + username3 + ")";
+                ds.PropertiesToLoad.Add("givenname");
+                result = ds.FindOne();
+                
+                if (result != null)
+                {                         
+                    // create new object from search result
+                    DirectoryEntry entryToUpdate = result.GetDirectoryEntry();
+
+                    var currentGivenName = entryToUpdate.Properties["givenname"][0].ToString();
+                    
+                    entryToUpdate.Properties["givenname"].Value = newInput;
+                    entryToUpdate.CommitChanges();
+                }
+            }
             catch (Exception)
             {
                 throw;

@@ -5,6 +5,8 @@ using System.Printing;
 using System.Windows.Xps;
 using System.Windows.Xps.Packaging;
 using System.IO;
+using System.Windows.Media;
+using System;
 
 namespace ADWPF
 {
@@ -37,18 +39,55 @@ namespace ADWPF
             hello.Close();
             PreviewD.Document = _document;
         }
+
         private void PrintSimpleTextButton_Click(object sender, RoutedEventArgs e)
         {
+            Visual v = sender as Visual;
+            System.Windows.FrameworkElement fe = v as System.Windows.FrameworkElement;
+            if (fe == null)
+                return;
+
             // Create a PrintDialog  
             PrintDialog printDlg = new PrintDialog();
+
+            // TEST 
+            if (printDlg.ShowDialog() == true)
+            {
+                //store original scale
+                Transform originalScale = fe.LayoutTransform;
+                //get selected printer capabilities
+                System.Printing.PrintCapabilities capabilities = printDlg.PrintQueue.GetPrintCapabilities(printDlg.PrintTicket);
+
+                //get scale of the print wrt to screen of WPF visual
+                double scale = Math.Min(capabilities.PageImageableArea.ExtentWidth / fe.ActualWidth, capabilities.PageImageableArea.ExtentHeight /
+                               fe.ActualHeight);
+
+                //Transform the Visual to scale
+                fe.LayoutTransform = new ScaleTransform(scale, scale);
+
+                //get the size of the printer page
+                System.Windows.Size sz = new System.Windows.Size(capabilities.PageImageableArea.ExtentWidth, capabilities.PageImageableArea.ExtentHeight);
+
+                //update the layout of the visual to the printer page size.
+                fe.Measure(sz);
+                fe.Arrange(new System.Windows.Rect(new System.Windows.Point(capabilities.PageImageableArea.OriginWidth, capabilities.PageImageableArea.OriginHeight), sz));
+
+                //now print the visual to printer to fit on the one page.
+                printDlg.PrintVisual(v, "My Print");
+
+                //apply the original transform.
+                fe.LayoutTransform = originalScale;
+            }
+            // TEST
+
             printDlg.PrintQueue = LocalPrintServer.GetDefaultPrintQueue();
             printDlg.PrintTicket = printDlg.PrintQueue.DefaultPrintTicket;
 
             // Create a FlowDocument dynamically.  
-            printDlg.PrintTicket.PageOrientation = PageOrientation.Portrait;
-            printDlg.PrintTicket.PageScalingFactor = 90;
-            printDlg.PrintTicket.PageMediaSize = new PageMediaSize(PageMediaSizeName.ISOA4);
-            printDlg.PrintTicket.PageBorderless = PageBorderless.None;
+            //printDlg.PrintTicket.PageOrientation = PageOrientation.Portrait;
+            //printDlg.PrintTicket.PageScalingFactor = 90;
+            //printDlg.PrintTicket.PageMediaSize = new PageMediaSize(PageMediaSizeName.ISOA4);
+            //printDlg.PrintTicket.PageBorderless = PageBorderless.Borderless;
 
             // Call PrintDocument method to send document to printer  
             if (printDlg.ShowDialog() == true)
