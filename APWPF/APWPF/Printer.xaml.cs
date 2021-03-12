@@ -43,7 +43,7 @@ namespace ADWPF
         private void PrintSimpleTextButton_Click(object sender, RoutedEventArgs e)
         {
             Visual v = sender as Visual;
-            System.Windows.FrameworkElement fe = v as System.Windows.FrameworkElement;
+            FrameworkElement fe = v as FrameworkElement;
             if (fe == null)
                 return;
 
@@ -56,7 +56,7 @@ namespace ADWPF
                 //store original scale
                 Transform originalScale = fe.LayoutTransform;
                 //get selected printer capabilities
-                System.Printing.PrintCapabilities capabilities = printDlg.PrintQueue.GetPrintCapabilities(printDlg.PrintTicket);
+                PrintCapabilities capabilities = printDlg.PrintQueue.GetPrintCapabilities(printDlg.PrintTicket);
 
                 //get scale of the print wrt to screen of WPF visual
                 double scale = Math.Min(capabilities.PageImageableArea.ExtentWidth / fe.ActualWidth, capabilities.PageImageableArea.ExtentHeight /
@@ -66,11 +66,11 @@ namespace ADWPF
                 fe.LayoutTransform = new ScaleTransform(scale, scale);
 
                 //get the size of the printer page
-                System.Windows.Size sz = new System.Windows.Size(capabilities.PageImageableArea.ExtentWidth, capabilities.PageImageableArea.ExtentHeight);
+                Size sz = new Size(capabilities.PageImageableArea.ExtentWidth, capabilities.PageImageableArea.ExtentHeight);
 
                 //update the layout of the visual to the printer page size.
                 fe.Measure(sz);
-                fe.Arrange(new System.Windows.Rect(new System.Windows.Point(capabilities.PageImageableArea.OriginWidth, capabilities.PageImageableArea.OriginHeight), sz));
+                fe.Arrange(new Rect(new Point(capabilities.PageImageableArea.OriginWidth, capabilities.PageImageableArea.OriginHeight), sz));
 
                 //now print the visual to printer to fit on the one page.
                 printDlg.PrintVisual(v, "My Print");

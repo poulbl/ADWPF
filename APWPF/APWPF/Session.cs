@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.DirectoryServices;
+﻿
 using System.DirectoryServices.AccountManagement;
 
 namespace ADWPF
@@ -19,8 +16,6 @@ namespace ADWPF
                 bLoggedIn = isValid;
                 return isValid;
             }
-
-            return false;
         }
 
         public static bool GetbLoggedIn()

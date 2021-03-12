@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.DirectoryServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ADWPF
 {
@@ -33,29 +25,50 @@ namespace ADWPF
                 loginWindow.Show();
                 this.Close();
             }
-            //users.SelectionChanged += OpenUserDetails;
+            users.SelectionChanged += OpenUserDetails;
         }
 
-        //private void OpenUserDetails(object sender, SelectionChangedEventArgs e)
-        //{
-        //    ADStream stream = new ADStream(ip, user, password);
-        //    Dictionary<string, List<string>> userdata = stream.GetAllData(users.SelectedItem.ToString());
-        //    UserDetails userDetails = new UserDetails(userdata[$"{users.SelectedItem}"]);
-        //    int i = 0;
-        //    userDetails.Show();
-        //}
+        // Creates window for displaying user details for print. UserDetails is not completed.
+        private void OpenUserDetails(object sender, SelectionChangedEventArgs e)
+        {
+            ADStream stream = new ADStream(ip, user, password);
+            Dictionary<string, List<string>> userdata = stream.GetAllData(users.SelectedItem.ToString());
+            UserDetails userDetails = new UserDetails(userdata[$"{users.SelectedItem}"]);
+            int i = 0;
+            userDetails.Show();
+        }
 
+        // Event for clicking the search button.
         private void submitButton_Click(object sender, RoutedEventArgs e)
         {
+            List<string> usersList = new List<string>();
 
             ADStream stream = new ADStream(ip, user, password);
 
-            var hej = functionBox.SelectedItem.ToString();
-            var hej2 = hej.Split(':');
-            string actualStr = hej2[1].Trim().ToLower();
+            // Get a workable string from the combobox to indicate which method we want to use.
+            var comboBoxSelect = functionBox.SelectedItem.ToString();
+            var comboBoxString = comboBoxSelect.Split(':');
+            string actualStr = comboBoxString[1].Trim().ToLower();
 
+            // Add users to ListBox.
+            if (Session.GetbLoggedIn())
+            {
+                SearchResultCollection searchResult = stream.GetUsers(usernameText.Text);
+                if (searchResult != null)
+                {
+                    for (int i = 0; i < searchResult.Count; i++)
+                    {
+                        usersList.Add(searchResult[i].Properties["name"][0].ToString());
+                    }
+                    users.ItemsSource = usersList;
+                }
+            }
+            else
+            {
+                result.Text = "Ikke logged ind :(";
+            }
 
-            if(actualStr == "get all data for user")
+            if (actualStr == "get all data for user")
             {
                 var userGetAll = stream.GetAllData(usernameText.Text);
 
@@ -76,6 +89,8 @@ namespace ADWPF
                     result.Text = "Ikke logged ind :(";
                 }
             }
+
+            // GET ALL USERS
             else if (actualStr == "get all users")
             {
                 var allusers = stream.GetAllUsers();
@@ -95,9 +110,9 @@ namespace ADWPF
                 {
                     result.Text = "Ikke logged ind :(";
                 }
-
             }
 
+            // GET USERS GROUPS
             else if (actualStr == "get all groups for a user")
             {
                 var uerg = stream.GetAllUsersGroups();
@@ -119,9 +134,10 @@ namespace ADWPF
                 }
             }
 
+            // GET SPECIFIC
             else if (actualStr == "get specific data from user")
             {
-                var specific = stream.GetSpecifik(usernameText.Text);
+                var specific = stream.GetSpecific(usernameText.Text);
                 if (Session.GetbLoggedIn())
                 {
                     StringBuilder printStr = new StringBuilder();
@@ -139,11 +155,12 @@ namespace ADWPF
                     result.Text = "Ikke logged ind :(";
                 }
             }
+            // GET USER
             else if (actualStr == "get user")
             {
                 if (Session.GetbLoggedIn())
                 {
-                var userGet = stream.GetUser(stream.GetAllUsers()[0]);
+                var userGet = stream.GetUser();
                 result.Text = userGet;
                 }
                 else
@@ -159,15 +176,12 @@ namespace ADWPF
 
             Printer trying = new Printer(strFile);
             trying.Show();
-
         }
 
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
         {
             editGivenName.Visibility = Visibility.Visible;
             update.Visibility = Visibility.Visible;
-
-
         }
 
         private void updateButton_Click(object sender, RoutedEventArgs e)

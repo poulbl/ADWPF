@@ -1,24 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
-using System.Text;
 
 namespace ADWPF
 {
     public class ADStream
     {
         DirectoryEntry de;
-        /*
-            * encapsulates a node or object in the Active Directory Domain Services hierarchy.
-            * Use this class for binding to objects, reading properties, and updating attributes. 
-            * Together with helper classes, DirectoryEntry provides support for life-cycle management and navigation methods, including creating, deleting, renaming, moving a child node, and enumerating children.
-            */
-        //DirectoryEntry entry = new DirectoryEntry();
 
-        /*
-            * 
-            */
-        //DirectorySearcher searcher = new DirectorySearcher();
         public ADStream(string ip, string user, string password)
         {
             ip = "LDAP://" + ip;
@@ -38,7 +27,21 @@ namespace ADWPF
 
         public string GetUser()
         {
-            return "";
+            throw new NotImplementedException();
+        }
+
+        // gets the information to create ListBox data in MainWindow
+        public SearchResultCollection GetUsers(string name)
+        {
+            SearchResultCollection result;
+            DirectorySearcher ds;
+
+            ds = new DirectorySearcher(de);
+            ds.Filter = $"(&(objectCategory=User)(objectClass=person)(name={name}*))";
+
+            result = ds.FindAll();
+
+            return result;
         }
 
         public List<string> GetAllUsers()
@@ -49,7 +52,6 @@ namespace ADWPF
 
             ds = new DirectorySearcher(de);
             ds.Filter = "(&(objectCategory=User)(objectClass=person))";
-
             results = ds.FindAll();
 
             foreach (SearchResult sr in results)
@@ -59,10 +61,8 @@ namespace ADWPF
             return listToReturn;
         }
 
-        // 192.168.132.71
         public Dictionary<string, List<string>> GetAllUsersGroups()
         {
-
             SearchResultCollection results;
             DirectorySearcher ds;
             Dictionary<string, List<string>> usersGroups = new Dictionary<string, List<string>>();
@@ -90,19 +90,19 @@ namespace ADWPF
             return usersGroups;
         }
 
-        public string GetUser(string username)
-        {
-            SearchResult result;
-            DirectorySearcher ds;
+        //public string GetUser(string username)
+        //{
+        //    SearchResult result;
+        //    DirectorySearcher ds;
 
-            ds = new DirectorySearcher(de);
-            ds.Filter = "(&(objectCategory=User)(objectClass=person))";
-            result = ds.FindOne();
+        //    ds = new DirectorySearcher(de);
+        //    ds.Filter = "(&(objectCategory=User)(objectClass=person))";
+        //    result = ds.FindOne();
 
-            return result.Properties["name"][0].ToString();
-        }
+        //    return result.Properties["name"][0].ToString();
+        //}
 
-        public Dictionary<string, List<string>> GetAllData(string username1)
+        public Dictionary<string, List<string>> GetAllData(string username)
         {
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
 
@@ -111,10 +111,10 @@ namespace ADWPF
                 SearchResult result;
                 DirectorySearcher ds;
                 ds = new DirectorySearcher(de);
-                ds.Filter = "(cn=" + username1 + ")";
+                ds.Filter = "(cn=" + username + ")";
 
                 result = ds.FindOne();
-                List<string> values1 = new List<string>();
+                List<string> values = new List<string>();
 
                 if (result != null)
                 {
@@ -126,11 +126,11 @@ namespace ADWPF
                         // cycle through objects in each field e.g. group membership  
                         // (for many fields there will only be one object such as name)
                         foreach (Object myCollection in fields[ldapField])
-                            values1.Add(String.Format("{0,-20} : {1}",
+                            values.Add(String.Format("{0,-20} : {1}",
                                           ldapField, myCollection.ToString()));
                     }
                 }
-                dict.Add(username1, values1);
+                dict.Add(username, values);
                 return dict;
             }
             catch (Exception)
@@ -139,7 +139,7 @@ namespace ADWPF
             }
         }
 
-        public Dictionary<string, List<string>> GetSpecifik(string username2)
+        public Dictionary<string, List<string>> GetSpecific(string username)
         {
             Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
 
@@ -148,7 +148,7 @@ namespace ADWPF
                 SearchResult result;
                 DirectorySearcher ds;
                 ds = new DirectorySearcher(de);
-                ds.Filter = "(name=" + username2 + ")";
+                ds.Filter = "(name=" + username + ")";
 
                 //Selected data groups
                 string[] requiredProperties = new string[] { "cn", "memberof", "userprincipalname", "description", "whenchanged" };
@@ -168,7 +168,7 @@ namespace ADWPF
                             values.Add(String.Format("{0,-20} : {1}",
                                         property, myCollection.ToString()));
                 }
-                dict.Add(username2, values);
+                dict.Add(username, values);
                 return dict;
             }
             catch (Exception)
@@ -177,13 +177,14 @@ namespace ADWPF
             }
         }
 
-        public void UpdateUserData(string username3, string newInput)
+
+        public void UpdateUserData(string username, string newInput)
         {
             try
             {
                 SearchResult result; DirectorySearcher ds;
                 ds = new DirectorySearcher(de);
-                ds.Filter = "(cn=" + username3 + ")";
+                ds.Filter = "(cn=" + username + ")";
                 ds.PropertiesToLoad.Add("givenname");
                 result = ds.FindOne();
                 

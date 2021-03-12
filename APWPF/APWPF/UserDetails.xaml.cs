@@ -22,6 +22,7 @@ namespace ADWPF
     public partial class UserDetails : Window
     {
         List<string> userdata;
+
         public UserDetails(List<string> userdata)
         {
             InitializeComponent();
@@ -31,7 +32,7 @@ namespace ADWPF
 
         public void ReadUserData(List<string> data)
         {
-
+            throw new NotImplementedException();
         }
 
         private void btnPrint_Click(object sender, RoutedEventArgs e)
@@ -39,6 +40,7 @@ namespace ADWPF
             ShowPrintPreview(contentForPrinting);
         }
 
+        // Shows a preview of the print ;D
         private void ShowPrintPreview(UIElement wpfElement)
         {
             if (File.Exists("print_preview.xps") == true)
